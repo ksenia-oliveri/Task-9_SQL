@@ -11,4 +11,10 @@ class Student extends Model
 
     protected $table = 'students';
     protected $guarded = false;
+
+    protected $fillable = [
+        'group_id',
+        'first_name',
+        'last_name',
+    ];
 }

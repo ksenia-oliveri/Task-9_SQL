@@ -11,4 +11,9 @@ class Course extends Model
 
     protected $table = 'courses';
     protected $guarded = false;
+
+    protected $fillable = [
+        'name',
+        'description',
+    ];
 }

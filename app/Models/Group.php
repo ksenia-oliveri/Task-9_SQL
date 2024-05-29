@@ -11,4 +11,8 @@ class Group extends Model
 
     protected $table = 'groups';
     protected $guarded = false;
+
+    protected $fillable = [
+        'name',
+    ];
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class FormsController extends Controller
@@ -20,7 +22,6 @@ class FormsController extends Controller
        ->groupBy('groups.name')
        //->having('count', '<=',  $number)
        ->get();
-       //dd($groups);
       return view('groups', compact(['groups', 'number']));
       
     }
@@ -31,10 +32,37 @@ class FormsController extends Controller
         $students = \DB::table('course_students')
         ->join('courses', 'courses.id', '=', 'course_students.course_id')
         ->join('students', 'students.id', '=', 'course_students.student_id')
-        ->select('students.first_name', 'students.last_name', 'courses.name')
+        ->select('students.first_name', 'students.last_name', 'courses.name', 'students.id')
         ->where('courses.name', '=', $search)
         ->get();
         return view("StudentsOnCourse", compact(['students', 'search']));
     }
 
+    public function deleteStudent(Request $request)
+    {   
+        $student_id = $request->student_id;
+       \DB::table('students')
+       ->where('students.id', '=', $student_id)
+       ->delete();
+        return 'Student with student_id ' . $student_id . ' was successfully deleted';
+    }
+
+    public function allStudentsCourses()
+    {
+        $students = Student::get();
+        $studentsCourses = \DB::table('course_students')
+        ->join('courses', 'courses.id', '=', 'course_students.course_id')
+        ->select('courses.name', 'course_students.student_id', 'courses.id')
+        ->get();
+        
+        $courses = Course::get();
+    
+        return view('StudentsAllCourses', compact(['students', 'studentsCourses', 'courses']));
+
+    }
+
+    public function addStudentToCourse()
+    {
+       
+    }
 }

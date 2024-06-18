@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>List of students related to the {{$search}} course</h1>
-    <table class="table table-striped">
+    <table class="table table-striped w-50" >
   <thead>
     <tr>
       <th scope="col">First Name</th>
@@ -18,8 +18,8 @@
   <tbody>
     @foreach ($students as $student)  
     <tr>  
-      <td>{{$student->first_name}}</td>
-      <td>{{$student->last_name}}</td>   
+      <td >{{$student->first_name}}</td>
+      <td >{{$student->last_name}}</td>   
     </tr>
     @endforeach
 </tbody>

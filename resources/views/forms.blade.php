@@ -42,13 +42,21 @@
     <input type= 'submit' class="btn btn-primary mt-2" value="Add">
 </div>
 </form>
-<form action="" class="p-2">
+<form action="{{route('delete.student')}}" method="POST" class="p-2">
+  @csrf
+  @method('DELETE')
 <div class="form-group">
     <label>Delete student by STUDENT_ID</label>
-    <input type="number" class="form-control"placeholder="Enter student ID">
+    <input type="number" class="form-control" name="student_id" placeholder="Enter student ID">
     <input type="submit" class="btn btn-primary mt-2" value="Delete">
 </div>
 </form>
+<div class="p-2">
+  <p>Show all students and their courses</p>
+  <a href="{{route('get.all.students.courses')}}">
+  <button type="button" class="btn btn-link">Show</button>
+  </a>
+</div>
     
 </body>
 </html>

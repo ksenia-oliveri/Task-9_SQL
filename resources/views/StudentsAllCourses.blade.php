@@ -47,6 +47,21 @@
         </div>
         </form>
       </td>
+      <td>
+        <form action="{{route('delete.student.from.course', ['student_id'=> $student->id])}}" method="post">
+        @csrf
+        @method('DELETE')
+        <div class="form-group">
+    <label>Delete from</label>
+    <select class="form-control" name="course">
+      @foreach ($courses as $course)
+      <option>{{$course->name}}</option>
+      @endforeach
+    </select>
+    <input type= 'submit' class="btn btn-primary mt-2" value="Delete">
+        </div>
+        </form>
+      </td>
     </tr>
     @endforeach
 </tbody>

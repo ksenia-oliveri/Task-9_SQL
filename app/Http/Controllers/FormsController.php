@@ -61,8 +61,39 @@ class FormsController extends Controller
 
     }
 
-    public function addStudentToCourse()
+    public function addStudentToCourse(Request $request, $student_id)
     {
+       $course = $request->course;
+
+       foreach(Course::where('name', $course)->get() as $info)
+       {
+        $courseId = $info->id;
+       }
        
+
+       \DB::table("course_students")->insert([
+        "student_id"=> $student_id,
+        "course_id"=> $courseId,
+    ]);
+        
+        return redirect()->route('get.all.students.courses');
+    
+    }
+
+    public function deleteStudentFromCourse(Request $request, $student_id)
+    {
+        $course = $request->course;
+
+        foreach(Course::where('name', $course)->get() as $info)
+       {
+        $courseId = $info->id;
+       }
+
+      $data= \DB::table("course_students")
+       ->where('course_students.student_id', '=', $student_id)
+       ->where('course_students.course_id', '=', $courseId)
+       ->delete();
+       
+       return redirect()->route('get.all.students.courses');
     }
 }

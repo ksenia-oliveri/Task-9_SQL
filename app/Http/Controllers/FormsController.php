@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreRequest;
 
 class FormsController extends Controller
 {
@@ -36,6 +37,13 @@ class FormsController extends Controller
         ->where('courses.name', '=', $search)
         ->get();
         return view("StudentsOnCourse", compact(['students', 'search']));
+    }
+
+    public function addNewStudent(StoreRequest $request)
+    {
+        $data = $request->validated();
+        Student::create($data);
+        return 'Student ' . $data['first_name'] . ' '. $data['last_name'] . ' was successfully added';
     }
 
     public function deleteStudent(Request $request)

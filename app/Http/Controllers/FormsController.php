@@ -21,8 +21,8 @@ class FormsController extends Controller
        ->join('groups', 'students.group_id', '=', 'groups.id')
        ->select(\DB::raw('COUNT(*) as count'), 'groups.name')
        ->groupBy('groups.name')
-       //->having('count', '<=',  $number)
        ->get();
+       
       return view('groups', compact(['groups', 'number']));
       
     }
@@ -97,7 +97,7 @@ class FormsController extends Controller
         $courseId = $info->id;
        }
 
-      $data= \DB::table("course_students")
+      \DB::table("course_students")
        ->where('course_students.student_id', '=', $student_id)
        ->where('course_students.course_id', '=', $courseId)
        ->delete();

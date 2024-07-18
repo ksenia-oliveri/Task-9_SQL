@@ -17,12 +17,10 @@
   </thead>
   <tbody>
     @foreach ($groups as $group)  
-    @if($group->count <= $number)
     <tr>  
       <td>{{$group->name}}</td>
       <td>{{$group->count}}</td>   
     </tr>
-    @endif
     @endforeach
 </tbody>
 </table>

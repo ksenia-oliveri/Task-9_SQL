@@ -7,10 +7,9 @@ use App\Http\Requests\AddCourseRequest;
 use App\Http\Requests\StoreRequest;
 use App\Http\Resources\GroupsResource;
 use App\Http\Resources\StudentsAllCoursesResource;
-use App\Http\Resources\StudentsOnCourseResource;
 use App\Http\Resources\StudentsResource;
+use App\Models\Course;
 use App\Models\CourseStudent;
-use App\Models\Group;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -58,7 +57,8 @@ class FormsApiController extends Controller
     public function findGroups(Request $request)
     {   
         $number = $request->number;
-       return GroupsResource::collection(Student::join('groups', 'students.group_id', '=', 'groups.id')->select(\DB::raw('COUNT(*) as count'), 'groups.name')->groupBy('groups.name')->get()->where('count', '<=', $number));
+         GroupsResource::collection(Student::join('groups', 'students.group_id', '=', 'groups.id')->select(\DB::raw('COUNT(*) as count'), 'groups.name')->groupBy('groups.name')->get()->where('count', '<=', $number));
+       return response()->json();
         
     }
 
@@ -95,7 +95,9 @@ class FormsApiController extends Controller
     public function findStudentsOnCourse(Request $request)
     {
         $course = $request->course;
-        return StudentsResource::collection(CourseStudent::join('courses', 'courses.id', '=', 'course_students.course_id')->join('students', 'students.id', '=', 'course_students.student_id')->select('students.first_name', 'students.last_name', 'courses.name')->where('courses.name', '=', $course)->get());
+        StudentsResource::collection(CourseStudent::join('courses', 'courses.id', '=', 'course_students.course_id')->join('students', 'students.id', '=', 'course_students.student_id')->select('students.first_name', 'students.last_name', 'courses.name')->where('courses.name', '=', $course)->get());
+
+        return response()->json();
 
     }
 
@@ -121,7 +123,7 @@ class FormsApiController extends Controller
  *         )
  *     ),
  *     @OA\Response(
- *         response=200,
+ *         response=201,
  *         description="OK",
  *         @OA\JsonContent(
  *            @OA\Property(property="data", type="object",
@@ -140,7 +142,9 @@ class FormsApiController extends Controller
     {
         $student = Student::create($request->validated());
 
-        return StudentsResource::make($student);
+        StudentsResource::make($student);
+
+        return response()->json();
     }
 
     /**
@@ -174,8 +178,7 @@ class FormsApiController extends Controller
     public function deleteStudent(Request $request)
     {   
         $student_id = $request->student_id;
-        \DB::table('students')
-        ->where('students.id', '=', $student_id)
+        Student::where('students.id', '=', $student_id)
         ->delete();
 
         return 'Student ' . $student_id . ' was successfully deleted';
@@ -207,26 +210,28 @@ class FormsApiController extends Controller
 
     public function allStudentsCourses()
     {
-        return StudentsAllCoursesResource::collection(CourseStudent::join('courses', 'courses.id', '=', 'course_students.course_id')->join('students', 'students.id', '=', 'course_students.student_id')->select('students.first_name', 'students.last_name', 'courses.name')->get());
+        StudentsAllCoursesResource::collection(CourseStudent::join('courses', 'courses.id', '=', 'course_students.course_id')->join('students', 'students.id', '=', 'course_students.student_id')->select('students.first_name', 'students.last_name', 'courses.name')->get());
+
+        return response()->json();
     }
 
     /**
  * @OA\Post(
- *     path="/api/v1/student/course/add",
+ *     path="/api/v1/student/{student_id}/course/add",
  *     summary="Adds a new course to student",
  *     @OA\RequestBody(
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
  *                 @OA\Property(
- *                     property="course_id",
- *                     type="intenger"
+ *                     property="course",
+ *                     type="string"
  *                 ),
  *                 @OA\Property(
  *                     property="student_id",
  *                     type="intenger"
  *                 ),
- *                 example={"course_id": "3", "student_id": "26"}
+ *                 example={"course": "Math", "student_id": "26"}
  *             )
  *         )
  *     ),
@@ -245,15 +250,18 @@ class FormsApiController extends Controller
  * )
  */
 
-    public function addStudentToCourse(Request $request)
+    public function addStudentToCourse(Request $request, $student_id)
     {
-
-        return 'Course ' . $request->course_id . ' was added to student ' . $request->student_id; 
+        CourseStudent::insert([
+            "student_id"=> $student_id,
+            "course_id"=> Course::select('courses.id')->where('courses.name', $request->course)->first()->id,
+        ]);
+        return 'Course ' . $request->course . ' was added to student ' . $student_id; 
     }
 
     /**
      * @OA\Delete(
-     *      path="/api/v1/student/course/delete",
+     *      path="/api/v1/student/{student_id}/course/delete",
      *      tags={"Students"},
      *      summary="Delete",
      *      description="Delete course from student",
@@ -289,13 +297,16 @@ class FormsApiController extends Controller
      * )
      */
     
-    public function deleteStudentFromCourse(Request $request)
+    public function deleteStudentFromCourse(Request $request, $student_id)
     {
-    //     CourseStudent::where('course_students.student_id', '=', $student_id)
-    //    ->where('course_students.course_id', '=', $course_id)
-    //    ->delete();
+        $data = Course::select('courses.id')->where('courses.name', '=', $request->course)->first()->id;
 
-       
+      CourseStudent::where('course_students.student_id', '=', $student_id)
+       ->where('course_students.course_id', '=', $data)
+       ->delete();
+
+       return 'Course ' . $request->course . ' was deleted from student ' . $student_id;  
+
     }
 
 }

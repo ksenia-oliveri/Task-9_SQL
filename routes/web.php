@@ -4,13 +4,13 @@ use App\Http\Controllers\FormsController;
 use App\Http\Controllers\StoreController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Auth::routes();
+Auth::routes();
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::prefix('forms')->group(function () {
     Route::get('/', [FormsController::class, 'index'])->name('mainPage');
@@ -21,7 +21,7 @@ Route::prefix('forms')->group(function () {
     Route::post('/student/{student_id}/course/add', [FormsController::class, 'addStudentToCourse'])->name('add.student.to.course');
     Route::delete('/student/{student_id}/course/delete', [FormsController::class, 'deleteStudentFromCourse'])->name('delete.student.from.course');
     
-    Route::post('/', [FormsController::class, 'addNewStudent'])->name('add.student');
+    Route::post('/add', [FormsController::class, 'addNewStudent'])->name('add.student');
     Route::delete('/delete', [FormsController::class, 'deleteStudent'])->name('delete.student');
 
 

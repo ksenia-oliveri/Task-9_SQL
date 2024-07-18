@@ -11,8 +11,8 @@ Route::prefix('v1')->group(function () {
     Route::delete('/delete', [FormsApiController::class, 'deleteStudent']);
 
     Route::get('/students/all/courses', [FormsApiController::class, 'allStudentsCourses']);
-    Route::post('/student/course/add', [FormsApiController::class, 'addStudentToCourse']);
-    Route::delete('/student/course/delete', [FormsApiController::class, 'deleteStudentFromCourse']);
+    Route::post('/student/{student_id}/course/add', [FormsApiController::class, 'addStudentToCourse']);
+    Route::delete('/student/{student_id}/course/delete', [FormsApiController::class, 'deleteStudentFromCourse']);
 });
 
 Route::get('/user', function (Request $request) {
